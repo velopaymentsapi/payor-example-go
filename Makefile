@@ -17,6 +17,9 @@ build:
 up: clean network
 	docker-compose run -d --service-ports api
 
+sh: clean network
+	docker-compose run --service-ports api sh
+
 down:
 	- docker-compose down
 
