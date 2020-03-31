@@ -1,0 +1,43 @@
+version: "3.5"
+
+services:
+  api:
+    container_name: payor-example-go
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "4567:3000"
+    env_file:
+      - .env
+    depends_on:
+      - db
+      - redis
+    networks:
+      - payornetwork
+    command: /app/cmd
+
+  db:
+    image: postgres:9.6
+    container_name: db
+    environment:
+      - POSTGRES_USER=payor
+      - POSTGRES_PASSWORD=payor
+    networks:
+      - payornetwork
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./pgsql:/docker-entrypoint-initdb.d
+
+  redis:
+    image: redis:alpine
+    ports:
+      - 6379:6379
+    container_name: redis
+    networks:
+      - payornetwork
+
+networks:
+  payornetwork:
+    name: external_payornetwork
