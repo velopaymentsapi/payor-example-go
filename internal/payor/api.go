@@ -12,7 +12,7 @@ import (
 	"github.com/gin-gonic/gin"
 	uuid "github.com/google/uuid"
 	"github.com/jinzhu/gorm"
-	velo "github.com/velopaymentsapi/velo-go"
+	velo "github.com/velopaymentsapi/velo-go/v2"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -104,9 +104,31 @@ func apiVeloAccounts(c *gin.Context) {
 }
 
 func apiVeloFundAccount(c *gin.Context) {
-	c.JSON(200, gin.H{
-		"method": "apiVeloFundingAccount",
-	})
+	var jsonMap map[string]interface{}
+	c.BindJSON(&jsonMap)
+
+	inputamount := jsonMap["amount"].(float64)
+	amount := int64(inputamount)
+
+	cfg := velo.NewConfiguration()
+	client := velo.NewAPIClient(cfg)
+	auth := context.WithValue(context.TODO(), velo.ContextAccessToken, os.Getenv("VELO_API_ACCESSTOKEN"))
+	args := velo.FundingRequestV1{Amount: amount}
+	funding, err := client.FundingManagerApi.CreateAchFundingRequest(auth, jsonMap["source_account"].(string), args)
+	if err != nil {
+		fmt.Println("FAILURE: apiVeloFundAccount", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"Message": "Internal Server Error"})
+		c.Abort()
+		return
+	}
+	if funding.StatusCode == 202 {
+		var jsonRes map[string]interface{}
+		c.JSON(200, jsonRes)
+	} else {
+		c.JSON(http.StatusInternalServerError, gin.H{"Message": "Internal Server Error"})
+		c.Abort()
+		return
+	}
 }
 
 func apiVeloSupportedCountries(c *gin.Context) {

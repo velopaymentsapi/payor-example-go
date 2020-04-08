@@ -8,7 +8,7 @@ import (
 	"time"
 
 	"github.com/antihax/optional"
-	velo "github.com/velopaymentsapi/velo-go"
+	velo "github.com/velopaymentsapi/velo-go/v2"
 )
 
 // VeloOAuthRefresh will check if OAuth2 token is about to expire ... if so .. issue event to refresh it

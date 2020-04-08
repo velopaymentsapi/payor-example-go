@@ -27,6 +27,8 @@ clean:
 	- docker-compose rm -f
 
 destroy:
+	- docker rm /db
+	- docker rm /redis
 	- docker rmi -f payor-example-go_api
 
 setdep:
