@@ -12,7 +12,7 @@ import (
 	"github.com/gin-gonic/gin"
 	uuid "github.com/google/uuid"
 	"github.com/jinzhu/gorm"
-	velo "github.com/velopaymentsapi/velo-go"
+	velo "github.com/velopaymentsapi/velo-go/v2"
 	"golang.org/x/crypto/bcrypt"
 )
 
